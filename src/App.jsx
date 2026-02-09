@@ -4,6 +4,7 @@ import Register from './components/Register'
 import TradeForm from './components/TradeForm'
 import TradeList from './components/TradeList'
 import Statistics from './components/Statistics'
+import ConsoleText from './components/ConsoleText'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -44,7 +45,7 @@ function App() {
         body: JSON.stringify({ action: 'check' })
       })
       const data = await response.json()
-      
+
       if (data.authenticated) {
         setUser(data.user)
       }
@@ -78,16 +79,16 @@ function App() {
     const losses = tradesData.filter(t => t.pnl < 0).length
     const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(2) : 0
     const totalPnL = tradesData.reduce((sum, t) => sum + parseFloat(t.pnl), 0)
-    
+
     const winningTrades = tradesData.filter(t => t.pnl > 0)
     const losingTrades = tradesData.filter(t => t.pnl < 0)
-    
-    const avgWin = winningTrades.length > 0 
-      ? winningTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / winningTrades.length 
+
+    const avgWin = winningTrades.length > 0
+      ? winningTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / winningTrades.length
       : 0
-    
-    const avgLoss = losingTrades.length > 0 
-      ? losingTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / losingTrades.length 
+
+    const avgLoss = losingTrades.length > 0
+      ? losingTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / losingTrades.length
       : 0
 
     setStats({
@@ -175,7 +176,7 @@ function App() {
 
   // Show login/register if not authenticated
   if (!user) {
-    return showLogin 
+    return showLogin
       ? <Login onLogin={handleLogin} onSwitchToRegister={() => setShowLogin(false)} />
       : <Register onRegister={handleRegister} onSwitchToLogin={() => setShowLogin(true)} />
   }
@@ -186,8 +187,15 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <header className="mb-8 flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">RichBy21</h1>
-            <p className="text-slate-300">{user.username}, lock in or be locked in the system?</p>
+            <h1 className="flex items-center text-4xl font-bold text-white mb-2">
+              <img
+                src="/public/r21-logo.png"
+                alt="R21 Logo"
+                className="h-20 w-auto mr-3"
+              />
+              RichBy21
+            </h1>
+            <ConsoleText text={`${user.username}, lock in or be locked in the system?`} />
           </div>
           <button
             onClick={handleLogout}
@@ -207,8 +215,8 @@ function App() {
         </div>
 
         <div>
-          <TradeList 
-            trades={trades} 
+          <TradeList
+            trades={trades}
             loading={loading}
             onDeleteTrade={handleDeleteTrade}
           />
