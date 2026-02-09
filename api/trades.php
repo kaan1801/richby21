@@ -36,7 +36,14 @@ switch ($method) {
         getTrades($db, $user_id);
         break;
     case 'POST':
-        addTrade($db, $user_id);
+        $data = json_decode(file_get_contents("php://input"), true);
+        $action = isset($data['action']) ? $data['action'] : 'add';
+        
+        if ($action === 'delete_all') {
+            deleteAllTrades($db, $user_id);
+        } else {
+            addTrade($db, $user_id);
+        }
         break;
     case 'DELETE':
         deleteTrade($db, $user_id);
@@ -133,6 +140,32 @@ function deleteTrade($db, $user_id) {
         echo json_encode([
             'success' => false,
             'message' => 'Error deleting trade: ' . $e->getMessage()
+        ]);
+    }
+}
+
+function deleteAllTrades($db, $user_id) {
+    try {
+        // Delete all trades for the current user
+        $query = "DELETE FROM trades WHERE user_id = :user_id";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            $deletedCount = $stmt->rowCount();
+            echo json_encode([
+                'success' => true,
+                'message' => "Successfully deleted {$deletedCount} trades",
+                'deleted_count' => $deletedCount
+            ]);
+        } else {
+            throw new Exception('Failed to delete trades');
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error deleting trades: ' . $e->getMessage()
         ]);
     }
 }
