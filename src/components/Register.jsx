@@ -68,7 +68,7 @@ function Register({ onRegister, onSwitchToLogin }) {
       <div className="max-w-md w-full">
         <div className="bg-slate-800 rounded-lg shadow-2xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">Trade Tracker</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">RichBy21</h1>
             <p className="text-slate-400">Create your account</p>
           </div>
 
