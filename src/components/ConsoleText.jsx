@@ -7,11 +7,11 @@ export default function ConsoleText({ text }) {
     if (!text) return;
 
     let index = 0;
-    let currentText = ""; // local string to accumulate characters
+    let currentText = "";
 
     const interval = setInterval(() => {
-      currentText += text[index]; // add character at current index
-      setDisplayedText(currentText); // update state
+      currentText += text[index];
+      setDisplayedText(currentText);
       index++;
       if (index === text.length) clearInterval(interval);
     }, 50);
