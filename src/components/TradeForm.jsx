@@ -2,158 +2,107 @@ import { useState } from 'react'
 
 function TradeForm({ onAddTrade }) {
   const [formData, setFormData] = useState({
-    symbol: '',
-    entryPrice: '',
-    exitPrice: '',
-    quantity: '',
-    tradeType: 'long',
-    date: new Date().toISOString().split('T')[0],
-    notes: ''
+    symbol: '', entryPrice: '', exitPrice: '', quantity: '',
+    tradeType: 'long', date: new Date().toISOString().split('T')[0], notes: ''
   })
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
     const entry = parseFloat(formData.entryPrice)
     const exit = parseFloat(formData.exitPrice)
     const qty = parseFloat(formData.quantity)
-    
-    let pnl = 0
-    if (formData.tradeType === 'long') {
-      pnl = (exit - entry) * qty
-    } else {
-      pnl = (entry - exit) * qty
-    }
-
-    const trade = {
-      ...formData,
-      pnl: pnl.toFixed(2)
-    }
-
-    onAddTrade(trade)
-    
-    // Reset form
+    const pnl = formData.tradeType === 'long' ? (exit - entry) * qty : (entry - exit) * qty
+    onAddTrade({ ...formData, pnl: pnl.toFixed(2) })
     setFormData({
-      symbol: '',
-      entryPrice: '',
-      exitPrice: '',
-      quantity: '',
-      tradeType: 'long',
-      date: new Date().toISOString().split('T')[0],
-      notes: ''
+      symbol: '', entryPrice: '', exitPrice: '', quantity: '',
+      tradeType: 'long', date: new Date().toISOString().split('T')[0], notes: ''
     })
   }
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+  const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
+
+  const label = txt => (
+    <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.7rem',
+      letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 7 }}>
+      {txt}
+    </label>
+  )
 
   return (
-    <div className="bg-slate-800 rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-white mb-6">Add New Trade</h2>
+    <div className="glass" style={{ padding: 28 }}>
+      <div style={{ marginBottom: 22 }}>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>
+          New Trade
+        </h2>
+        <div style={{ width: 32, height: 2, background: 'var(--accent)', borderRadius: 2, marginTop: 8, opacity: 0.6 }} />
+      </div>
+
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 20px' }}>
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Symbol</label>
-            <input
-              type="text"
-              name="symbol"
-              value={formData.symbol}
-              onChange={handleChange}
-              required
-              placeholder="e.g., AAPL, EURUSD"
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {label('Symbol')}
+            <input className="glass-input" type="text" name="symbol" value={formData.symbol}
+              onChange={handleChange} required placeholder="AAPL, EURUSD…" />
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Trade Type</label>
-            <select
-              name="tradeType"
-              value={formData.tradeType}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            {label('Trade Type')}
+            <select className="glass-input" name="tradeType" value={formData.tradeType} onChange={handleChange}>
               <option value="long">Long</option>
               <option value="short">Short</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Entry Price</label>
-            <input
-              type="number"
-              step="0.01"
-              name="entryPrice"
-              value={formData.entryPrice}
-              onChange={handleChange}
-              required
-              placeholder="0.00"
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {label('Entry Price')}
+            <input className="glass-input" type="number" step="0.01" name="entryPrice"
+              value={formData.entryPrice} onChange={handleChange} required placeholder="0.00" />
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Exit Price</label>
-            <input
-              type="number"
-              step="0.01"
-              name="exitPrice"
-              value={formData.exitPrice}
-              onChange={handleChange}
-              required
-              placeholder="0.00"
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {label('Exit Price')}
+            <input className="glass-input" type="number" step="0.01" name="exitPrice"
+              value={formData.exitPrice} onChange={handleChange} required placeholder="0.00" />
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Quantity</label>
-            <input
-              type="number"
-              step="0.01"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              required
-              placeholder="0"
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {label('Quantity')}
+            <input className="glass-input" type="number" step="0.01" name="quantity"
+              value={formData.quantity} onChange={handleChange} required placeholder="0" />
           </div>
 
           <div>
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {label('Date')}
+            <input className="glass-input" type="date" name="date"
+              value={formData.date} onChange={handleChange} required />
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-slate-300 mb-2 text-sm font-medium">Notes (Optional)</label>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              rows="3"
-              placeholder="Trade notes, strategy, etc."
-              className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div style={{ gridColumn: '1 / -1' }}>
+            {label('Notes')}
+            <textarea className="glass-input" name="notes" value={formData.notes}
+              onChange={handleChange} rows={3} placeholder="Strategy, observations…"
+              style={{ resize: 'vertical', minHeight: 72 }} />
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+        <button type="submit" style={{
+          marginTop: 20, width: '100%', padding: '12px 0',
+          borderRadius: 10, border: '1px solid rgba(110,231,183,0.3)',
+          background: 'rgba(110,231,183,0.09)',
+          color: 'var(--accent)', fontFamily: 'var(--font-ui)', fontWeight: 500,
+          fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+          cursor: 'pointer', transition: 'all 0.2s',
+        }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(110,231,183,0.15)'
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(110,231,183,0.1)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(110,231,183,0.09)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
         >
-          Add Trade
+          + Add Trade
         </button>
       </form>
     </div>

@@ -1,10 +1,7 @@
 import { useState } from 'react'
 
 function Login({ onLogin, onSwitchToRegister }) {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  })
+  const [formData, setFormData] = useState({ username: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -12,104 +9,97 @@ function Login({ onLogin, onSwitchToRegister }) {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
       const response = await fetch('/api/auth.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          action: 'login',
-          username: formData.username,
-          password: formData.password
-        })
+        body: JSON.stringify({ action: 'login', username: formData.username, password: formData.password })
       })
-
       const data = await response.json()
-
-      if (data.success) {
-        onLogin(data.user)
-      } else {
-        setError(data.message || 'Login failed')
-      }
-    } catch (err) {
+      if (data.success) onLogin(data.user)
+      else setError(data.message || 'Login failed')
+    } catch {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+  const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-slate-800 rounded-lg shadow-2xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">RichBy21</h1>
-            <p className="text-slate-400">Login to your account</p>
-          </div>
+    <div style={{
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px', position: 'relative', overflow: 'hidden',
+    }}>
+      {/* Orbs */}
+      <div style={{
+        position: 'fixed', width: 500, height: 500, borderRadius: '50%',
+        top: '-10%', left: '-15%', pointerEvents: 'none',
+        background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)',
+        filter: 'blur(40px)', zIndex: 0,
+      }} />
+      <div style={{
+        position: 'fixed', width: 400, height: 400, borderRadius: '50%',
+        bottom: '-5%', right: '-10%', pointerEvents: 'none',
+        background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)',
+        filter: 'blur(40px)', zIndex: 0,
+      }} />
 
-          {error && (
-            <div className="mb-6 bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
-              {error}
+      <div className="glass fade-up" style={{ width: '100%', maxWidth: 400, padding: 40, position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <img src="/public/r21-logo.png" alt="R21" style={{ height: 48, marginBottom: 16 }} />
+          <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: '1.6rem', margin: 0, letterSpacing: '0.05em' }}>
+            RichBy21
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: 8, letterSpacing: '0.1em' }}>
+            TRADING JOURNAL
+          </p>
+        </div>
+
+        {error && (
+          <div style={{
+            padding: '10px 14px', borderRadius: 8, marginBottom: 20,
+            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+            color: 'var(--loss-text)', fontSize: '0.78rem',
+          }}>{error}</div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {[['Username', 'text', 'username'], ['Password', 'password', 'password']].map(([lbl, type, name]) => (
+            <div key={name} style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.68rem',
+                letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 7 }}>
+                {lbl}
+              </label>
+              <input className="glass-input" type={type} name={name}
+                value={formData[name]} onChange={handleChange} required
+                placeholder={`Enter your ${lbl.toLowerCase()}`} />
             </div>
-          )}
+          ))}
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-slate-300 mb-2 text-sm font-medium">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your username"
-              />
-            </div>
+          <button type="submit" disabled={loading} style={{
+            marginTop: 24, width: '100%', padding: '12px 0',
+            borderRadius: 10, border: '1px solid rgba(110,231,183,0.3)',
+            background: loading ? 'rgba(110,231,183,0.05)' : 'rgba(110,231,183,0.09)',
+            color: 'var(--accent)', fontFamily: 'var(--font-ui)', fontWeight: 500,
+            fontSize: '0.82rem', letterSpacing: '0.14em', textTransform: 'uppercase',
+            cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
+            opacity: loading ? 0.6 : 1,
+          }}>
+            {loading ? '...' : 'Login'}
+          </button>
+        </form>
 
-            <div className="mb-6">
-              <label className="block text-slate-300 mb-2 text-sm font-medium">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50"
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-slate-400">
-              Don't have an account?{' '}
-              <button
-                onClick={onSwitchToRegister}
-                className="text-blue-400 hover:text-blue-300 font-semibold"
-              >
-                Register here
-              </button>
-            </p>
-          </div>
+        <div style={{ marginTop: 24, textAlign: 'center' }}>
+          <span style={{ color: 'var(--text-subtle)', fontSize: '0.75rem' }}>No account? </span>
+          <button onClick={onSwitchToRegister} style={{
+            background: 'none', border: 'none', color: 'var(--accent)',
+            fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'var(--font-ui)',
+          }}>
+            Register →
+          </button>
         </div>
       </div>
     </div>

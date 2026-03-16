@@ -1,12 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-deep: rgba(0, 0, 0, 0.22);
+  --accent: #6ee7b7;
+  --accent-rgb: 110, 231, 183;
+  --win: rgba(52, 211, 153, 0.13);
+  --win-text: #6ee7b7;
+  --win-border: rgba(52, 211, 153, 0.25);
+  --loss: rgba(239, 68, 68, 0.12);
+  --loss-text: #fca5a5;
+  --loss-border: rgba(239, 68, 68, 0.24);
+  --surface: #080d18;
+  --text-primary: rgba(255,255,255,0.90);
+  --text-muted: rgba(255,255,255,0.42);
+  --text-subtle: rgba(255,255,255,0.20);
+  --font-ui: 'Outfit', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+}
+
+/* Theme variants */
+[data-theme="darker"] { --surface: #040810; --glass-bg: rgba(255,255,255,0.03); }
+[data-theme="oled"]   { --surface: #000000; --glass-bg: rgba(255,255,255,0.025); }
+
+/* Accent variants */
+[data-accent="blue"]   { --accent: #93c5fd; --accent-rgb: 147,197,253; --win: rgba(59,130,246,0.13); --win-text: #93c5fd; --win-border: rgba(59,130,246,0.25); }
+[data-accent="violet"] { --accent: #c4b5fd; --accent-rgb: 196,181,253; --win: rgba(139,92,246,0.13); --win-text: #c4b5fd; --win-border: rgba(139,92,246,0.25); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  background: var(--surface);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-deep {
+  background: var(--glass-deep);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+
+.glass-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.glass-input:focus {
+  border-color: rgba(var(--accent-rgb), 0.45);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
+}
+.glass-input option { background: #0f1a2e; color: var(--text-primary); }
+.glass-input::placeholder { color: var(--text-subtle); }
+
+/* Calendar cells */
+.cal-day {
+  border-radius: 10px; padding: 8px 4px; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s; min-height: 52px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 0.78rem; border: 1px solid transparent;
+}
+.cal-day:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,0,0,0.3); }
+.cal-empty  { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
+.cal-win    { background: var(--win); border-color: var(--win-border); color: var(--win-text); }
+.cal-loss   { background: var(--loss); border-color: var(--loss-border); color: var(--loss-text); }
+.cal-selected { box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.45) !important; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up   { animation: fadeUp 0.45s ease both; }
+.fade-up-1 { animation-delay: 0.06s; }
+.fade-up-2 { animation-delay: 0.13s; }
+.fade-up-3 { animation-delay: 0.20s; }
+
+@keyframes pulseDot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.pulse-dot { animation: pulseDot 1.4s ease-in-out infinite; }
+
+@keyframes float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%     { transform: translateY(-18px) scale(1.03); }
+}
+.orb   { animation: float 13s ease-in-out infinite; }
+.orb-2 { animation-delay: -5s; animation-duration: 17s; }
+.orb-3 { animation-delay: -9s; animation-duration: 21s; }
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
 }

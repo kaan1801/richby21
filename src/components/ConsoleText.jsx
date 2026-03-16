@@ -1,28 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 
 export default function ConsoleText({ text }) {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayed, setDisplayed] = useState('')
 
   useEffect(() => {
-    if (!text) return;
-
-    let index = 0;
-    let currentText = "";
-
-    const interval = setInterval(() => {
-      currentText += text[index];
-      setDisplayedText(currentText);
-      index++;
-      if (index === text.length) clearInterval(interval);
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [text]);
+    if (!text) return
+    let i = 0, current = ''
+    const iv = setInterval(() => {
+      current += text[i]; setDisplayed(current); i++
+      if (i === text.length) clearInterval(iv)
+    }, 45)
+    return () => clearInterval(iv)
+  }, [text])
 
   return (
-    <p className="text-slate-300 font-mono">
-      {displayedText}
-      <span className="animate-pulse">|</span>
+    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
+      {displayed}<span className="pulse-dot" style={{ opacity: 0.6 }}>▌</span>
     </p>
-  );
+  )
 }
