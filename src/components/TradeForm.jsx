@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import useIsMobile from '../hooks/useIsMobile'
 
 function TradeForm({ onAddTrade }) {
+  const isMobile = useIsMobile()
   const [formData, setFormData] = useState({
     symbol: '', entryPrice: '', exitPrice: '', quantity: '',
     tradeType: 'long', date: new Date().toISOString().split('T')[0], notes: ''
@@ -22,23 +24,25 @@ function TradeForm({ onAddTrade }) {
   const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
 
   const label = txt => (
-    <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '0.7rem',
-      letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 7 }}>
-      {txt}
-    </label>
+    <label style={{
+      display: 'block', color: 'var(--text-muted)', fontSize: '0.72rem',
+      letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 7
+    }}>{txt}</label>
   )
 
   return (
-    <div className="glass" style={{ padding: 28 }}>
+    <div className="glass" style={{ padding: isMobile ? 20 : 28 }}>
       <div style={{ marginBottom: 22 }}>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>
-          New Trade
-        </h2>
+        <h2 style={{ fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>New Trade</h2>
         <div style={{ width: 32, height: 2, background: 'var(--accent)', borderRadius: 2, marginTop: 8, opacity: 0.6 }} />
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 20px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '14px' : '16px 20px'
+        }}>
           <div>
             {label('Symbol')}
             <input className="glass-input" type="text" name="symbol" value={formData.symbol}
@@ -77,7 +81,7 @@ function TradeForm({ onAddTrade }) {
               value={formData.date} onChange={handleChange} required />
           </div>
 
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div style={{ gridColumn: isMobile ? '1' : '1 / -1' }}>
             {label('Notes')}
             <textarea className="glass-input" name="notes" value={formData.notes}
               onChange={handleChange} rows={3} placeholder="Strategy, observations…"
@@ -87,20 +91,14 @@ function TradeForm({ onAddTrade }) {
 
         <button type="submit" style={{
           marginTop: 20, width: '100%', padding: '12px 0',
-          borderRadius: 10, border: '1px solid rgba(110,231,183,0.3)',
-          background: 'rgba(110,231,183,0.09)',
-          color: 'var(--accent)', fontFamily: 'var(--font-ui)', fontWeight: 500,
-          fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+          borderRadius: 10, border: '1px solid rgba(var(--accent-rgb),0.3)',
+          background: 'rgba(var(--accent-rgb),0.09)',
+          color: 'var(--accent)', fontFamily: 'var(--font-ui)', fontWeight: 600,
+          fontSize: '0.88rem', letterSpacing: '0.06em',
           cursor: 'pointer', transition: 'all 0.2s',
         }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(110,231,183,0.15)'
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(110,231,183,0.1)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(110,231,183,0.09)'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.15)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(var(--accent-rgb),0.1)' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.09)'; e.currentTarget.style.boxShadow = 'none' }}
         >
           + Add Trade
         </button>

@@ -1,3 +1,4 @@
+import useIsMobile from './hooks/useIsMobile'
 import { useState, useEffect } from 'react'
 import Login from './components/Login'
 import Register from './components/Register'
@@ -7,12 +8,15 @@ import Statistics from './components/Statistics'
 import ConsoleText from './components/ConsoleText'
 import Navbar from './components/Navbar'
 import Settings from './components/Settings'
+import TradeImport from './components/TradeImport'
 
 function App() {
+  const isMobile = useIsMobile()
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [showLogin, setShowLogin] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [showImport, setShowImport] = useState(false)
   const [trades, setTrades] = useState([])
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
@@ -169,17 +173,32 @@ function App() {
           onLogout={handleLogout}
         />
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '20px 14px' : '32px 24px' }}>
+          {showImport && (
+            <TradeImport
+              onClose={() => setShowImport(false)}
+              onImportComplete={fetchTrades}
+            />
+          )}
+
           {activeTab === 'dashboard' && (
             <>
-              <div className="fade-up" style={{ marginBottom: 28 }}>
+              <div className="fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 10 }}>
                 <ConsoleText text={`> ${user.username} — lock in or be locked in the system`} />
+                <button onClick={() => setShowImport(true)} style={{
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  padding: '8px 16px', borderRadius: 10, cursor: 'pointer',
+                  border: '1px solid rgba(var(--accent-rgb),0.25)',
+                  background: 'rgba(var(--accent-rgb),0.07)',
+                  color: 'var(--accent)', fontSize: '0.82rem', fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                }}>
+                  ↑ Import CSV
+                </button>
               </div>
-              <div className="fade-up fade-up-1" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
+              <div className="fade-up fade-up-1" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: 20 }}>
                   <TradeForm onAddTrade={handleAddTrade} />
                   <Statistics stats={stats} />
-                </div>
               </div>
             </>
           )}

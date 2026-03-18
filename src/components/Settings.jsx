@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import useIsMobile from '../hooks/useIsMobile'
 
 /* ── helpers ───────────────────────────────────────────── */
 const Toggle = ({ enabled, onChange }) => (
@@ -183,6 +184,7 @@ const ACCENTS = [
 ]
 
 export default function Settings({ username }) {
+  const isMobile = useIsMobile()
   const [prefs, setPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('r21_prefs')) || {} } catch { return {} }
   })
@@ -216,7 +218,7 @@ export default function Settings({ username }) {
     <>
       {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
 
-      <div className="fade-up" style={{ maxWidth: 640, margin: '0 auto', paddingBottom: 60 }}>
+      <div className="fade-up" style={{ maxWidth: 640, margin: '0 auto', paddingBottom: 60, padding: isMobile ? '0 2px' : '0' }}>
         <div style={{ marginBottom: 30 }}>
           <h2 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, letterSpacing: '-0.01em' }}>Settings</h2>
           <div style={{ width: 36, height: 2, background: 'var(--accent)', borderRadius: 2, marginTop: 10, opacity: 0.6 }} />
